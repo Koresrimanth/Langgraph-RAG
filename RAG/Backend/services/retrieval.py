@@ -119,25 +119,98 @@ def decompose_query(query: str):
 
 
 
-def retrieve_documents(query: str):
+# def retrieve_documents(query: str):
+#     all_docs = []
+#     query_map = decompose_query(query)
+
+#     for db_name, sub_query in query_map.items():
+#         if db_name not in retrievers: continue
+#         results = retrievers[db_name].retrieve(sub_query, k=3)
+
+#         # Chroma returns lists of lists: [['doc1', 'doc2']]
+#         if results['documents'] and len(results['documents']) > 0:
+#             # results['documents'][0] is the actual list of strings
+#             docs_list = results['documents'][0] 
+#             meta_list = results['metadatas'][0]
+
+#             for i in range(len(docs_list)):
+#                 all_docs.append({
+#                     "content": docs_list[i],  # Now this is a single string, not a list
+#                     "metadata": meta_list[i],
+#                     "db_source": db_name
+#                 })
+#     return all_docs
+
+# def retrieve_documents(query_map: dict):
+#     """
+#     Retrieve documents using precomputed query_map
+#     Example:
+#     {
+#         "metrics": "CPU usage",
+#         "logs": "error logs"
+#     }
+#     """
+
+#     all_docs = []
+
+#     # safety fallback
+#     if not query_map:
+#         print("[Retrieve] Empty query_map, skipping retrieval")
+#         return all_docs
+
+#     for db_name, sub_query in query_map.items():
+
+#         if db_name not in retrievers:
+#             print(f"[Retrieve] Skipping unknown DB: {db_name}")
+#             continue
+
+#         if not sub_query:
+#             continue
+
+#         results = retrievers[db_name].retrieve(sub_query, k=3)
+
+#         # Handle Chroma output
+#         if results.get("documents") and len(results["documents"]) > 0:
+
+#             docs_list = results["documents"][0]
+#             meta_list = results["metadatas"][0]
+
+#             for i in range(len(docs_list)):
+#                 all_docs.append({
+#                     "content": docs_list[i],
+#                     "metadata": meta_list[i],
+#                     "db_source": db_name,
+#                     "sub_query": sub_query
+#                 })
+
+#     print(f"[Retrieve] Total docs: {len(all_docs)}")
+
+#     return all_docs
+
+def retrieve_documents(query_map: dict):
     all_docs = []
-    query_map = decompose_query(query)
 
     for db_name, sub_query in query_map.items():
-        if db_name not in retrievers: continue
+
+        if db_name not in retrievers:
+            continue
+
         results = retrievers[db_name].retrieve(sub_query, k=3)
 
-        # Chroma returns lists of lists: [['doc1', 'doc2']]
-        if results['documents'] and len(results['documents']) > 0:
-            # results['documents'][0] is the actual list of strings
-            docs_list = results['documents'][0] 
-            meta_list = results['metadatas'][0]
+        # ✅ FIX: flatten properly
+        if results.get("documents") and len(results["documents"]) > 0:
+
+            docs_list = results["documents"][0]
+            meta_list = results["metadatas"][0]
 
             for i in range(len(docs_list)):
                 all_docs.append({
-                    "content": docs_list[i],  # Now this is a single string, not a list
+                    "content": docs_list[i],   # ✅ string
                     "metadata": meta_list[i],
-                    "db_source": db_name
+                    "db_source": db_name,
+                    "sub_query": sub_query
                 })
-    return all_docs
 
+    print(f"[Retrieve] Total docs: {len(all_docs)}")
+
+    return all_docs
