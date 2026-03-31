@@ -1,0 +1,14 @@
+from pydantic import BaseModel
+from typing import List,Any,Optional,Dict
+
+
+class QueryRequest(BaseModel):
+    query: str
+    history: List[Dict[str, Any]] = []
+
+
+class QueryResponse(BaseModel):
+    query:str
+    answer:str
+    documents:List[dict]
+    retry_count:int

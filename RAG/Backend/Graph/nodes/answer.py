@@ -1,13 +1,22 @@
 from RAG.Backend.services.llm_service import call_llm
 
 
+def format_history(history):
+    formatted = []
+
+    for msg in history:
+        if msg["role"] == "user":
+            formatted.append(f"User: {msg['content']}")
+        elif msg["role"] == "assistant":
+            formatted.append(f"Assistant: {msg['content']}")
+
+    return "\n".join(formatted)
+
 def answer_node(state):
     query = state["query"]
     docs = state["documents"]
-
-    # =========================
-    # ⚠️ Safety: handle empty docs
-    # =========================
+    history = state.get("history", [])   
+    
     if not docs:
         print("[Answer] No documents found")
         return {
@@ -23,6 +32,7 @@ def answer_node(state):
     # 🧠 Build structured context
     # =========================
     context_parts = []
+    history_text = format_history(history)
 
     for i, d in enumerate(docs):
         source = d.get("db_source", "unknown")
@@ -42,6 +52,8 @@ def answer_node(state):
 
     Use ONLY the provided context to answer the question.
 
+    Conversation History:
+    {history_text}
     Context:
     {context}
 
