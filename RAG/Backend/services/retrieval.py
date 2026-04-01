@@ -55,7 +55,13 @@ import json
 def decompose_query(query: str):
     # 1. Be very strict in the prompt
     prompt = f"""
-    You are a query router. Decompose the user query into sub-queries for specific databases for the user question.
+    Analyze the user query: "{query}"
+    
+    1. If the query is a greeting, personal question (e.g., "what is my name"), or general chat NOT related to documentation, return: {{"intent": "chat"}}.
+    2. If it asks about technical docs, logs, or metrics, decompose it for: [logs, docs, metrics, alerts].
+
+    Output ONLY raw JSON
+    
     Databases: [logs, docs, metrics, alerts]
 
     RULES:

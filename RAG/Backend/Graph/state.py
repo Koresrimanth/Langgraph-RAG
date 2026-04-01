@@ -7,6 +7,7 @@ import operator
 class GraphState(TypedDict):
     query: str
     query_map: Dict[str, str]
+    route: str
     history: List[Dict[str, Any]]
     documents: List
     answer: str

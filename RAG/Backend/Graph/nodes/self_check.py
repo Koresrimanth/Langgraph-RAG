@@ -8,6 +8,12 @@ def self_check_node(state):
 
     print(f"[SelfCheck] retry_count = {retry_count}")
 
+   
+    if state.get("route") == "GENERAL":
+        print("[SelfCheck] Skipping for GENERAL query")
+        return "end"
+
+    
     if retry_count >= 2:
         print("[SelfCheck] Max retries reached")
         return "end"
@@ -28,4 +34,8 @@ def self_check_node(state):
         return "end"
     else:
         print("[SelfCheck] Answer rejected → retrying")
+
+        
+        state["retry_count"] = retry_count + 1
+
         return "retry"

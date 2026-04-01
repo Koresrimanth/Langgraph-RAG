@@ -20,7 +20,13 @@ def build_graph():
     #edges
     workflow.set_entry_point("router_node")
     #router->retrieve
-    workflow.add_edge("router_node","retrieve_node")
+    workflow.add_conditional_edges("router_node",
+                                   lambda state:state["route"],
+                                   {
+                                       "GENERAL":"answer_node",
+                                       "KNOWELEDGE":"retrieve_node"
+                                   })
+    
 
     #rerank if multi db answer
 
