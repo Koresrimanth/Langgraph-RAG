@@ -4,7 +4,8 @@ from typing import List,Any,Optional,Dict
 
 class QueryRequest(BaseModel):
     query: str
-    history: List[Dict[str, Any]] = []
+    user_id: str
+    session_id: str
 
 
 class QueryResponse(BaseModel):

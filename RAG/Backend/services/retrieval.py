@@ -202,7 +202,7 @@ def retrieve_documents(query_map: dict):
             continue
 
         results = retrievers[db_name].retrieve(sub_query, k=3)
-
+        # print("the documents retrieved is",results)
         # ✅ FIX: flatten properly
         if results.get("documents") and len(results["documents"]) > 0:
 

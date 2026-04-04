@@ -24,7 +24,7 @@ def build_graph():
                                    lambda state:state["route"],
                                    {
                                        "GENERAL":"answer_node",
-                                       "KNOWELEDGE":"retrieve_node"
+                                       "KNOWLEDGE": "retrieve_node"
                                    })
     
 

@@ -85,13 +85,20 @@ from RAG.Backend.services.llm_service import call_llm
 
 
 def format_history(history):
-    formatted = []
+    if not history:
+        return "No previous conversation."
 
-    for msg in history[-5:]:   # 🔥 small improvement (limit size)
-        if msg["role"] == "user":
-            formatted.append(f"User: {msg['content']}")
-        elif msg["role"] == "assistant":
-            formatted.append(f"Assistant: {msg['content']}")
+    formatted = []
+    # Take the last 5 to keep the prompt clean
+    for msg in history[-5:]:
+        # Use .lower() to ensure it matches regardless of how it's stored in DB
+        role = msg.get("role", "").lower()
+        content = msg.get("content", "")
+
+        if role == "user":
+            formatted.append(f"User: {content}")
+        elif role in ["assistant", "bot"]:
+            formatted.append(f"Assistant: {content}")
 
     return "\n".join(formatted)
 
@@ -103,7 +110,7 @@ def answer_node(state):
     route = state.get("route", "KNOWLEDGE")
 
     history_text = format_history(history)
-
+    print("the history we got from the postgres is",history_text)
     
     if route == "GENERAL":
         print("[Answer] General query → LLM only")
@@ -125,7 +132,7 @@ def answer_node(state):
         """
 
         answer = call_llm(prompt)
-
+        print("The answer from the llm is",answer)
         return {"answer": answer,
                 "retry_count": 0}
 

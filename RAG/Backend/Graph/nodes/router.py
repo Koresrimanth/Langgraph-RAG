@@ -45,7 +45,8 @@ def router(state):
 
     #  Existing logic (for RAG)
     query_map = decompose_query(query)
-
+    print("the query map for this question is ",query_map)
+    print(" ****** ")
     if not query_map:
         query_map = {src: query for src in COLLECTION_NAMES}
 
