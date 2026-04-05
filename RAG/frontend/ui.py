@@ -1,6 +1,6 @@
 import streamlit as st
 import requests
-
+import uuid
 # =========================
 # CONFIG
 # =========================
@@ -17,6 +17,11 @@ st.title("💬 Simple RAG Chatbot")
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
+if "user_id" not in st.session_state:
+    st.session_state["user_id"]=str(uuid.uuid4())
+
+if "session_id" not in st.session_state:
+    st.session_state["session_id"]=str(uuid.uuid4())
 # =========================
 # DISPLAY CHAT
 # =========================
@@ -29,6 +34,9 @@ for msg in st.session_state.messages:
 # =========================
 user_input = st.chat_input("Ask something...")
 
+st.write("User ID:", st.session_state["user_id"])
+st.write("Session ID:", st.session_state["session_id"])
+
 if user_input:
 
     # Add user message
@@ -40,16 +48,7 @@ if user_input:
     with st.chat_message("user"):
         st.markdown(user_input)
 
-    # =========================
-    # ✅ CLEAN HISTORY (FIX)
-    # =========================
-    history = [
-        {
-            "role": msg.get("role", ""),
-            "content": msg.get("content", "")
-        }
-        for msg in st.session_state.messages[-MAX_HISTORY:]
-    ]
+    
 
     # =========================
     # API CALL
@@ -62,7 +61,8 @@ if user_input:
                     API_URL,
                     json={
                         "query": user_input,
-                        "history": history
+                        "user_id":st.session_state["user_id"],
+                        "session_id":st.session_state["session_id"]
                     },
                     timeout=60
                 )

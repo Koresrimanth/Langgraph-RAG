@@ -12,4 +12,4 @@ langchain-core>=0.3.0
 langchain-google-genai  # For Gemini Embedding 2
 elasticsearch>=8.0.0
 psycopg2
-#uvicorn RAG.Backend.fastapi.main:app --reload
+#uvicorn RAG.Backend.fastapi.api:app --reload
